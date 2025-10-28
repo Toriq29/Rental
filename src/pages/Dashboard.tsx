@@ -68,7 +68,7 @@ const Dashboard = () => {
     // ]
 
     // return { states, jenisMesin, kcSupervisi, vendorCro }
-    return { states, kcSupervisi}
+    return { states, kcSupervisi }
 
   }, [data])
 
@@ -228,7 +228,7 @@ const Dashboard = () => {
   console.log("Dashboard - Filtered data:", filteredData.length)
   console.log("Dashboard - Selected rows:", Array.from(selectedRows))
 
-  
+
 
   return (
     <div className="min-h-screen">
@@ -308,25 +308,43 @@ const Dashboard = () => {
                 </div>
 
                 {showWarningSummary && (
-                  <div className="mt-4">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-                      {warningItems.map((item, index) => (
-                        <button
-                          key={`${item.kode_unit_kerja}-${item.lokasi}`}
-                          onClick={() => scrollToRow(item.kode_unit_kerja, item.lokasi)}
-                          className="warning-summary-item text-left p-2 rounded border hover:bg-red-50 transition-colors"
-                        >
-                          <div className="text-sm font-medium text-red-800">
-                            {item.kode_unit_kerja} | {item.nama_unit_kerja}
-                          </div>
-                          <div className="text-xs text-red-600">
-                            {item.kc_supervisi} | {item.lokasi}
-                          </div>
-                        </button>
-                      ))}
-                    </div>
+                  <div className="mt-4 space-y-4">
+                    {Object.entries(
+                      warningItems.reduce<Record<string, typeof warningItems>>((groups, item) => {
+                        const key = item.kc_supervisi;
+                        if (!groups[key]) groups[key] = [];
+                        groups[key].push(item);
+                        return groups;
+                      }, {})
+                    ).map(([kcSupervisi, items]) => (
+                      <div
+                        key={kcSupervisi}
+                        className="border rounded-lg p-3 bg-red-50/30 shadow-sm"
+                      >
+                        <h3 className="text-sm font-semibold text-red-800 mb-2">
+                          {kcSupervisi}
+                        </h3>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                          {items.map((item) => (
+                            <button
+                              key={`${item.kode_unit_kerja}-${item.lokasi}`}
+                              onClick={() =>
+                                scrollToRow(item.kode_unit_kerja, item.lokasi)
+                              }
+                              className="warning-summary-item text-left p-2 rounded border bg-white hover:bg-red-50 transition-colors"
+                            >
+                              <div className="text-sm font-medium text-red-800">
+                                {item.kode_unit_kerja} | {item.nama_unit_kerja}
+                              </div>
+                              <div className="text-xs text-red-600">{item.lokasi}</div>
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    ))}
                   </div>
                 )}
+
               </div>
             </div>
           )}
