@@ -234,7 +234,7 @@ const Dashboard = () => {
     <div className="min-h-screen">
       <Header />
 
-      <main className="container py-6">
+      <main className="w-full max-w-none px-6 py-6">
         <div className="px-4 py-6">
           <div className="flex justify-between items-center mb-6">
             <div>
